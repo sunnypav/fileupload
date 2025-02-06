@@ -139,6 +139,10 @@ class LShapedVPAIDAd {
         }
     }
 
+    getAdIcons() {
+        return null;
+    }
+
     getAdLinear() { return true; }
     getAdDuration() { return this.videoElement ? this.videoElement.duration : 0; }
     getAdVolume() { return this.videoElement ? this.videoElement.volume : 1; }
