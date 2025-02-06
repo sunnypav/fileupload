@@ -129,6 +129,6 @@ class LShapedVPAIDAd {
     getAdRemainingTime() { return this.videoElement ? this.videoElement.duration - this.videoElement.currentTime : 0; }
 }
 
-window.getVPAIDAd = function () {
+var getVPAIDAd = function () {
     return new LShapedVPAIDAd();
 };
