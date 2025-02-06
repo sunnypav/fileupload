@@ -129,6 +129,10 @@ class LShapedVPAIDAd {
         this.callEvent("AdStopped");
     }
 
+        getVPAIDAd() {
+        return this;
+    }
+
     subscribe(eventCallback, eventName) {
         this.eventsCallbacks[eventName] = eventCallback;
     }
