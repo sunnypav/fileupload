@@ -133,8 +133,18 @@ class LShapedVPAIDAd {
         return this;
     }
 
+    resizeAd(width, height, viewMode) {
+        this.videoElement.style.width = `${width}px`;
+        this.videoElement.style.height = `${height}px`;
+        this.callEvent("AdSizeChanged");
+    }
+
     subscribe(eventCallback, eventName) {
         this.eventsCallbacks[eventName] = eventCallback;
+    }
+
+    unsubscribe(eventName) {
+        delete this.eventsCallbacks[eventName];
     }
 
     callEvent(eventName) {
