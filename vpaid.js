@@ -102,6 +102,23 @@ class LShapedVPAIDAd {
             this.ctaButtonElement.style.opacity = "0";
         }
     }
+    collapseAd() {
+        this.videoElement.style.width = "75%";
+        this.videoElement.style.height = "75%";
+        this.qrCodeElement.style.opacity = "1";
+        this.productImageElement.style.opacity = "1";
+        this.ctaButtonElement.style.opacity = "1";
+        this.callEvent("AdCollapsed");
+    }
+
+    expandAd() {
+        this.videoElement.style.width = "100%";
+        this.videoElement.style.height = "100%";
+        this.qrCodeElement.style.opacity = "0";
+        this.productImageElement.style.opacity = "0";
+        this.ctaButtonElement.style.opacity = "0";
+        this.callEvent("AdExpanded");
+    }
 
     stopAd() {
         this.videoElement.pause();
