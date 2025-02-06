@@ -120,6 +120,10 @@ class LShapedVPAIDAd {
         this.callEvent("AdExpanded");
     }
 
+    skipAd() {
+        stopAd();
+    }
+
     stopAd() {
         this.videoElement.pause();
         this.videoElement.remove();
