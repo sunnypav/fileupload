@@ -25,7 +25,7 @@ initAd(width, height, viewMode, desiredBitrate, creativeData, environmentVars) {
 
         // Create video element (Full initially)
         this.videoElement = document.createElement("video");
-        this.videoElement.src = "https://your-server.com/video.mp4"; // Change URL
+        this.videoElement.src = "https://cdn.tubemogul.com/AdobeCreativeCloudVideo.mp4"; // Change URL
         this.videoElement.style.width = "100%";
         this.videoElement.style.height = "100%";
         this.videoElement.style.transition = "all 1s ease-in-out";
@@ -44,14 +44,14 @@ initAd(width, height, viewMode, desiredBitrate, creativeData, environmentVars) {
 
         // Create QR Code
         this.qrCodeElement = document.createElement("img");
-        this.qrCodeElement.src = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://yourproduct.com";
+        this.qrCodeElement.src = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://adobe.com";
         this.qrCodeElement.style.width = "20%";
         this.qrCodeElement.style.height = "auto";
         this.contentWrapper.appendChild(this.qrCodeElement);
 
         // Create Product Image
         this.productImageElement = document.createElement("img");
-        this.productImageElement.src = "https://your-server.com/product.jpg"; // Change URL
+        this.productImageElement.src = "https://playtime.tubemogul.com/adtags/no_javascript.jpg"; // Change URL
         this.productImageElement.style.width = "30%";
         this.productImageElement.style.height = "auto";
         this.contentWrapper.appendChild(this.productImageElement);
@@ -64,7 +64,7 @@ initAd(width, height, viewMode, desiredBitrate, creativeData, environmentVars) {
         this.ctaButtonElement.style.color = "white";
         this.ctaButtonElement.style.border = "none";
         this.ctaButtonElement.style.cursor = "pointer";
-        this.ctaButtonElement.onclick = () => window.open("https://yourproduct.com", "_blank");
+        this.ctaButtonElement.onclick = () => window.open("https://adobe.com", "_blank");
         this.contentWrapper.appendChild(this.ctaButtonElement);
 
         this.videoElement.addEventListener("timeupdate", () => this.applyLayoutBasedOnTime());
