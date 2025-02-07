@@ -34,9 +34,9 @@ initAd(width, height, viewMode, desiredBitrate, creativeData, environmentVars) {
         this.ctaButtonElement = document.createElement("button");
         this.ctaButtonElement.innerText = "Buy Now";
         this.ctaButtonElement.style.position = "absolute";
-        this.ctaButtonElement.style.bottom = `${height * 0.05}px`;
-        this.ctaButtonElement.style.width = `${width * 0.5}px`;
-        this.ctaButtonElement.style.left = `${width * 0.25}px`;
+        this.ctaButtonElement.style.bottom = `${height * 0.1}px`;
+        this.ctaButtonElement.style.width = `${width * 0.4}px`;
+        this.ctaButtonElement.style.left = `${width * 0.1}px`;
         this.ctaButtonElement.style.padding = `${height * 0.02}px ${width * 0.05}px`;
         this.ctaButtonElement.style.background = "red";
         this.ctaButtonElement.style.color = "white";
