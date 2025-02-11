@@ -178,5 +178,4 @@
   window.getVPaidad = function () {
     return new VPAIDAd();
   };
-})();
   
