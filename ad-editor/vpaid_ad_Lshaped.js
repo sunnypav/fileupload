@@ -15,6 +15,10 @@
       this.videoElements = [];
     }
 
+    handshakeVersion(version) {
+      return "2.0";
+    }
+
     initAd(container, width, height) {
       this.adContainer = container;
       this.adWidth = width;
