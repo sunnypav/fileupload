@@ -2,8 +2,8 @@
   class VPAIDAd {
     constructor() {
       this.adContainer = null;
-      this.adWidth = 640;
-      this.adHeight = 360;
+      this.adWidth = null;
+      this.adHeight = null;
       this.viewMode = "normal";
       this.desiredBitrate = 500;
       this.currentTime = 0;
@@ -29,19 +29,23 @@
       this.viewMode = viewMode;
       this.desiredBitrate = desiredBitrate;
 
-      this.loadGSAP();
-      this.dispatchEvent("AdLoaded");
+      this.loadGSAP(() => {
+        this.dispatchEvent("AdLoaded");
+      });
     }
 
-    loadGSAP() {
+    loadGSAP(callback) {
       if (window.gsap) {
         this.gsapLoaded = true;
+        callback();
         return;
       }
+
       const script = document.createElement("script");
       script.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js";
       script.onload = () => {
         this.gsapLoaded = true;
+        callback();
       };
       document.body.appendChild(script);
     }
@@ -61,7 +65,9 @@
     }
 
     renderAd() {
+      if (!this.adContainer) return;
       this.adContainer.innerHTML = "";
+
       this.elements.forEach((parallel) => {
         parallel.elements.forEach((el) => {
           const element = this.createElement(el);
@@ -80,15 +86,17 @@
       elem.style.opacity = "0";
       elem.setAttribute("data-start", el.startOffset || 0);
       elem.setAttribute("data-duration", el.duration || 5);
-      elem.style.width = (el.width / 1920) * this.adWidth + "px";
-      elem.style.height = (el.height / 1080) * this.adHeight + "px";
-      elem.style.left = (el.x / 1920) * this.adWidth + "px";
-      elem.style.top = (el.y / 1080) * this.adHeight + "px";
+
+      // Dynamic Scaling
+      elem.style.width = (el.width / jsonData.outputResolution.width) * this.adWidth + "px";
+      elem.style.height = (el.height / jsonData.outputResolution.height) * this.adHeight + "px";
+      elem.style.left = (el.x / jsonData.outputResolution.width) * this.adWidth + "px";
+      elem.style.top = (el.y / jsonData.outputResolution.height) * this.adHeight + "px";
 
       switch (el.type) {
         case "text":
           elem.innerText = el.content;
-          elem.style.fontSize = el.fontSize + "px";
+          elem.style.fontSize = (el.fontSize / jsonData.outputResolution.width) * this.adWidth + "px";
           elem.style.color = el.color;
           elem.style.fontWeight = el.fontWeight;
           elem.style.backgroundColor = el.backgroundColor || "transparent";
@@ -190,7 +198,7 @@
 
     collapseAd() {
       this.adExpanded = false;
-      this.resizeAd(640, 360, "normal");
+      this.resizeAd(this.adWidth, this.adHeight, "normal");
       this.dispatchEvent("AdCollapsed");
     }
 
