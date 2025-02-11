@@ -109,7 +109,7 @@
       elem.style.width = (el.width / 1920) * this.adWidth + "px";
       elem.style.height = (el.height / 1080) * this.adHeight + "px";
       elem.style.left = (el.x / 1920) * this.adWidth + "px";
-      elem.style.top = (el.y / 1080)) * this.adHeight + "px";
+      elem.style.top = (el.y / 1080) * this.adHeight + "px";
 
       switch (el.type) {
         case "text":
