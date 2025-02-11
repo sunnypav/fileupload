@@ -37,7 +37,9 @@
       }
 
             this.loadGSAP(() => {
+              console.log("loaded greensock library");
         this.loadQRCodeLibrary(() => {
+          console.log("loaded qr code library");
           this.dispatchEvent("AdLoaded");
         });
       });
@@ -79,6 +81,8 @@
     }
 
     renderAd() {
+      console.log("inside render Ad");
+
       if (!this.adContainer) return;
 
       this.adContainer.innerHTML = "";
