@@ -84,7 +84,7 @@
       console.log("inside render Ad");
 
       if (!this.adContainer) return;
-
+      try {
       this.adContainer.innerHTML = "";
       this.timerElements = [];
 
@@ -98,6 +98,10 @@
       });
 
       this.syncAnimations();
+      } catch(err){
+        console.error("error during rendering: ");
+        console.error(err);
+      }
     }
 
     createElement(el) {
