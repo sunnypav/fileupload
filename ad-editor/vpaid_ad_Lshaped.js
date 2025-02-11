@@ -175,7 +175,7 @@
     }
   }
 
-  window.getVPaidad = function () {
+  window.getVPAIDAd = function () {
     return new VPAIDAd();
   };
   
