@@ -4,6 +4,8 @@
       this.adContainer = null;
       this.adWidth = 640;
       this.adHeight = 360;
+      this.viewMode = "normal";
+      this.desiredBitrate = 500;
       this.currentTime = 0;
       this.isPlaying = false;
       this.adStarted = false;
@@ -13,30 +15,49 @@
       this.elements = [{"duration":1,"elements":[{"id":1739284243998,"name":"video-616","type":"video","x":100,"y":99,"width":1195,"height":699,"start":0,"duration":1},{"id":1739284265529,"name":"image-227","type":"image","x":1401,"y":99,"width":498,"height":498,"start":0,"duration":1},{"id":1739284280886,"name":"qr-204","type":"qr","x":1397,"y":701,"width":497,"height":349,"start":0,"duration":1},{"id":1739284295535,"name":"text-986","type":"text","x":104,"y":859,"width":1197,"height":100,"start":0,"duration":1,"textAlign":"center"}]}];
       this.adDuration = parseInt("1".replace("s", ""), 10);
       this.videoElements = [];
+      this.adExpanded = false;
+      this.gsapLoaded = false;
     }
 
-    handshakeVersion(version) {
+    handshakeVersion(playerVPAIDVersion) {
       return "2.0";
     }
 
-    initAd(container, width, height) {
-      this.adContainer = container;
+    initAd(width, height, viewMode, desiredBitrate, creativeData = "", environmentVars = "") {
       this.adWidth = width;
       this.adHeight = height;
-      this.loadGSAP(() => {
-        this.renderAd();
-      });
+      this.viewMode = viewMode;
+      this.desiredBitrate = desiredBitrate;
+
+      this.loadGSAP();
+      this.dispatchEvent("AdLoaded");
     }
 
-    loadGSAP(callback) {
+    loadGSAP() {
       if (window.gsap) {
-        callback();
+        this.gsapLoaded = true;
         return;
       }
       const script = document.createElement("script");
       script.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js";
-      script.onload = callback;
+      script.onload = () => {
+        this.gsapLoaded = true;
+      };
       document.body.appendChild(script);
+    }
+
+    startAd() {
+      if (this.adStarted) return;
+      if (!this.gsapLoaded) {
+        setTimeout(() => this.startAd(), 100);
+        return;
+      }
+
+      this.adStarted = true;
+      this.isPlaying = true;
+      this.renderAd();
+      this.interval = setInterval(() => this.updateAdTime(), 1000);
+      this.dispatchEvent("AdStarted");
     }
 
     renderAd() {
@@ -126,23 +147,18 @@
       });
     }
 
-    startAd() {
-      if (this.adStarted) return;
-      this.adStarted = true;
-      this.isPlaying = true;
-      this.interval = setInterval(() => this.updateAdTime(), 1000);
-    }
-
     pauseAd() {
       this.isPlaying = false;
       clearInterval(this.interval);
       this.videoElements.forEach((video) => video.pause());
+      this.dispatchEvent("AdPaused");
     }
 
     resumeAd() {
       this.isPlaying = true;
       this.videoElements.forEach((video) => video.play());
       this.interval = setInterval(() => this.updateAdTime(), 1000);
+      this.dispatchEvent("AdPlaying");
     }
 
     stopAd() {
@@ -153,62 +169,81 @@
         video.currentTime = 0;
       });
       this.adContainer.innerHTML = "";
+      this.dispatchEvent("AdStopped");
     }
 
-    resizeAd(width, height) {
+    resizeAd(width, height, viewMode) {
       this.adWidth = width;
       this.adHeight = height;
+      this.viewMode = viewMode;
       this.renderAd();
+      this.dispatchEvent("AdSizeChange");
     }
 
     expandAd() {
+      this.adExpanded = true;
       this.adContainer.style.width = "100%";
       this.adContainer.style.height = "100%";
-      this.resizeAd(window.innerWidth, window.innerHeight);
+      this.resizeAd(window.innerWidth, window.innerHeight, "fullscreen");
+      this.dispatchEvent("AdExpanded");
     }
 
     collapseAd() {
-      this.resizeAd(640, 360);
+      this.adExpanded = false;
+      this.resizeAd(640, 360, "normal");
+      this.dispatchEvent("AdCollapsed");
     }
 
-    updateAdTime() {
-      this.currentTime++;
-      if (this.currentTime >= this.adDuration) {
+    skipAd() {
+      if (undefined) {
         this.stopAd();
+        this.dispatchEvent("AdSkipped");
       }
     }
 
-    getAdRemainingTime() {
+    get adLinear() {
+      return true;
+    }
+
+    get adWidth() {
+      return this.adWidth;
+    }
+
+    get adHeight() {
+      return this.adHeight;
+    }
+
+    get adExpanded() {
+      return this.adExpanded;
+    }
+
+    get adSkippableState() {
+      return undefined;
+    }
+
+    get adRemainingTime() {
       return this.adDuration - this.currentTime;
     }
 
-    getAdDuration() {
+    get adDuration() {
       return this.adDuration;
     }
 
-    getAdVolume() {
+    get adVolume() {
       return this.volume;
     }
-    setAdVolume(volume) {
+
+    set adVolume(volume) {
       this.volume = volume;
       this.videoElements.forEach((video) => (video.volume = volume));
     }
 
-    skipAd() {
-      if (false) {
-        this.stopAd();
+    dispatchEvent(eventName) {
+      if (this.adContainer) {
+        let event = new Event(eventName);
+        this.adContainer.dispatchEvent(event);
       }
     }
-
-    subscribe(event, callback) {
-      this.adContainer.addEventListener(event, callback);
-    }
-
-    unsubscribe(event, callback) {
-      this.adContainer.removeEventListener(event, callback);
-    }
-
-    getAdLinear() { return true; }
   }
 
   window.getVPAIDAd = function () {
