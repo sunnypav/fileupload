@@ -2,8 +2,8 @@
   class VPAIDAd {
     constructor() {
       this.adContainer = null;
-      this.adWidth = null;
-      this.adHeight = null;
+      this.adWidth = 0;
+      this.adHeight = 0;
       this.viewMode = "normal";
       this.desiredBitrate = 500;
       this.currentTime = 0;
@@ -11,12 +11,14 @@
       this.adStarted = false;
       this.adPaused = false;
       this.volume = 1;
-      this.interval = null;
-      this.elements = [{"duration":1,"elements":[{"id":1739284243998,"name":"video-616","type":"video","x":100,"y":99,"width":1195,"height":699,"start":0,"duration":1},{"id":1739284265529,"name":"image-227","type":"image","x":1401,"y":99,"width":498,"height":498,"start":0,"duration":1},{"id":1739284280886,"name":"qr-204","type":"qr","x":1397,"y":701,"width":497,"height":349,"start":0,"duration":1},{"id":1739284295535,"name":"text-986","type":"text","x":104,"y":859,"width":1197,"height":100,"start":0,"duration":1,"textAlign":"center"}]}];
+      this.adExpanded = false;
       this.adDuration = parseInt("1".replace("s", ""), 10);
       this.videoElements = [];
-      this.adExpanded = false;
+      this.timerElements = [];
+      this.elements = [{"duration":1,"elements":[{"id":1739284243998,"name":"video-616","type":"video","x":100,"y":99,"width":1195,"height":699,"start":0,"duration":1},{"id":1739284265529,"name":"image-227","type":"image","x":1401,"y":99,"width":498,"height":498,"start":0,"duration":1},{"id":1739284280886,"name":"qr-204","type":"qr","x":1397,"y":701,"width":497,"height":349,"start":0,"duration":1},{"id":1739284295535,"name":"text-986","type":"text","x":104,"y":859,"width":1197,"height":100,"start":0,"duration":1,"textAlign":"center"}]}];
+      this.eventCallbacks = {}; 
       this.gsapLoaded = false;
+      this.skipAdAllowed = false;
     }
 
     handshakeVersion(playerVPAIDVersion) {
@@ -30,7 +32,9 @@
       this.desiredBitrate = desiredBitrate;
 
       this.loadGSAP(() => {
-        this.dispatchEvent("AdLoaded");
+        this.loadQRCodeLibrary(() => {
+          this.dispatchEvent("AdLoaded");
+        });
       });
     }
 
@@ -45,6 +49,20 @@
       script.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js";
       script.onload = () => {
         this.gsapLoaded = true;
+        callback();
+      };
+      document.body.appendChild(script);
+    }
+
+    loadQRCodeLibrary(callback) {
+      if (window.QRCode) {
+        callback();
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+      script.onload = () => {
         callback();
       };
       document.body.appendChild(script);
@@ -67,6 +85,7 @@
     renderAd() {
       if (!this.adContainer) return;
       this.adContainer.innerHTML = "";
+      this.timerElements = [];
 
       this.elements.forEach((parallel) => {
         parallel.elements.forEach((el) => {
@@ -87,7 +106,6 @@
       elem.setAttribute("data-start", el.startOffset || 0);
       elem.setAttribute("data-duration", el.duration || 5);
 
-      // Dynamic Scaling
       elem.style.width = (el.width / jsonData.outputResolution.width) * this.adWidth + "px";
       elem.style.height = (el.height / jsonData.outputResolution.height) * this.adHeight + "px";
       elem.style.left = (el.x / jsonData.outputResolution.width) * this.adWidth + "px";
@@ -116,26 +134,26 @@
           video.style.width = "100%";
           video.style.height = "100%";
           video.controls = false;
-          video.muted = true;
+          video.volume = this.volume;
+          video.muted = false;
           video.setAttribute("data-startOffset", el.startOffset || 0);
           this.videoElements.push(video);
           elem.appendChild(video);
           break;
 
         case "qrcode":
-          let qr = document.createElement("img");
-          qr.src = el.data;
-          qr.style.width = "100%";
-          qr.style.height = "100%";
-          elem.appendChild(qr);
+          let qrContainer = document.createElement("div");
+          new QRCode(qrContainer, { text: el.data, width: parseInt(elem.style.width, 10), height: parseInt(elem.style.height, 10) });
+          elem.appendChild(qrContainer);
           break;
 
         case "timer":
-          elem.innerText = "00:00";
-          elem.setAttribute("data-format", el.format);
+          elem.innerText = this.formatTime(el.format, 0);
           elem.style.fontSize = el.fontSize + "px";
           elem.style.color = el.color;
           elem.style.backgroundColor = el.backgroundColor;
+          elem.setAttribute("data-format", el.format);
+          this.timerElements.push({ elem, format: el.format });
           break;
       }
 
@@ -172,12 +190,15 @@
     stopAd() {
       this.isPlaying = false;
       clearInterval(this.interval);
-      this.videoElements.forEach((video) => {
-        video.pause();
-        video.currentTime = 0;
-      });
       this.adContainer.innerHTML = "";
       this.dispatchEvent("AdStopped");
+    }
+
+    skipAd() {
+      if (this.skipAdAllowed) {
+        this.stopAd();
+        this.dispatchEvent("AdSkipped");
+      }
     }
 
     resizeAd(width, height, viewMode) {
@@ -185,72 +206,61 @@
       this.adHeight = height;
       this.viewMode = viewMode;
       this.renderAd();
-      this.dispatchEvent("AdSizeChange");
     }
 
     expandAd() {
       this.adExpanded = true;
-      this.adContainer.style.width = "100%";
-      this.adContainer.style.height = "100%";
-      this.resizeAd(window.innerWidth, window.innerHeight, "fullscreen");
       this.dispatchEvent("AdExpanded");
     }
 
     collapseAd() {
       this.adExpanded = false;
-      this.resizeAd(this.adWidth, this.adHeight, "normal");
       this.dispatchEvent("AdCollapsed");
     }
 
-    skipAd() {
-      if (undefined) {
-        this.stopAd();
-        this.dispatchEvent("AdSkipped");
-      }
-    }
-
-    get adLinear() {
-      return true;
-    }
-
-    get adWidth() {
-      return this.adWidth;
-    }
-
-    get adHeight() {
-      return this.adHeight;
-    }
-
-    get adExpanded() {
-      return this.adExpanded;
-    }
-
-    get adSkippableState() {
-      return undefined;
-    }
-
-    get adRemainingTime() {
-      return this.adDuration - this.currentTime;
-    }
-
-    get adDuration() {
-      return this.adDuration;
-    }
-
-    get adVolume() {
+    getAdVolume() {
       return this.volume;
     }
 
-    set adVolume(volume) {
+    setAdVolume(volume) {
       this.volume = volume;
       this.videoElements.forEach((video) => (video.volume = volume));
+      this.dispatchEvent("AdVolumeChanged");
     }
 
-    dispatchEvent(eventName) {
-      if (this.adContainer) {
-        let event = new Event(eventName);
-        this.adContainer.dispatchEvent(event);
+    getAdDuration() {
+      return this.adDuration;
+    }
+
+    getAdRemainingTime() {
+      return this.adDuration - this.currentTime;
+    }
+
+    subscribe(event, callback, context) {
+      if (!this.eventCallbacks[event]) {
+        this.eventCallbacks[event] = [];
       }
+      this.eventCallbacks[event].push({ callback, context });
+    }
+
+    unsubscribe(event, callback) {
+      if (this.eventCallbacks[event]) {
+        this.eventCallbacks[event] = this.eventCallbacks[event].filter(listener => listener.callback !== callback);
+      }
+    }
+
+    dispatchEvent(event) {
+      if (this.eventCallbacks[event]) {
+        this.eventCallbacks[event].forEach(listener => listener.callback.call(listener.context || this));
+      }
+    }
+
+    formatTime(format, seconds) {
+      const d = Math.floor(seconds / 86400);
+      const h = Math.floor((seconds % 86400) / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      return format.replace("d", d).replace("h", h).replace("m", m).replace("s", s);
     }
   }
 
