@@ -23,7 +23,20 @@
       this.adContainer = container;
       this.adWidth = width;
       this.adHeight = height;
-      this.renderAd();
+      this.loadGSAP(() => {
+        this.renderAd();
+      });
+    }
+
+    loadGSAP(callback) {
+      if (window.gsap) {
+        callback();
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js";
+      script.onload = callback;
+      document.body.appendChild(script);
     }
 
     renderAd() {
@@ -169,14 +182,33 @@
       return this.adDuration - this.currentTime;
     }
 
+    getAdDuration() {
+      return this.adDuration;
+    }
+
     getAdVolume() {
       return this.volume;
     }
-
     setAdVolume(volume) {
       this.volume = volume;
       this.videoElements.forEach((video) => (video.volume = volume));
     }
+
+    skipAd() {
+      if (false) {
+        this.stopAd();
+      }
+    }
+
+    subscribe(event, callback) {
+      this.adContainer.addEventListener(event, callback);
+    }
+
+    unsubscribe(event, callback) {
+      this.adContainer.removeEventListener(event, callback);
+    }
+
+    getAdLinear() { return true; }
   }
 
   window.getVPAIDAd = function () {
