@@ -242,7 +242,7 @@
       if (!this.eventCallbacks[event]) {
         this.eventCallbacks[event] = [];
       }
-      this.eventCallbacks[event].push({ callback, context });
+      this.eventCallbacks[event].push({callback});
     }
 
     unsubscribe(callback, event) {
@@ -255,7 +255,7 @@
     dispatchEvent(event) {
       console.log("dispatched to event: " + event);
       if (this.eventCallbacks[event]) {
-        this.eventCallbacks[event].forEach(listener => listener.callback.call(listener.context || this));
+        this.eventCallbacks[event].forEach(listener => listener.callback.call());
       }
     }
   }
