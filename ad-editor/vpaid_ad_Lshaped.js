@@ -39,17 +39,20 @@
       this.loadAll();
     }
 
-    loadAll(callback) {
+    loadAll() {
+      console.log("inside loadall");
       const gsapScript = document.createElement("script");
       gsapScript.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js";
       document.body.appendChild(gsapScript);
-
+      console.log("loaded gsap");
       const qrScript = document.createElement("script");
       qrScript.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
       document.body.appendChild(qrScript);
+      console.log("loaded qr code library");
     }
 
     startAd() {
+      console.log("inside start Ad");
       if (this.adStarted) return;
 
       this.adStarted = true;
