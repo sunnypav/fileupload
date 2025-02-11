@@ -38,6 +38,7 @@
 
       this.loadGSAP(() => {
         this.loadQRCodeLibrary(() => {
+          this.prebuildElements();
           this.dispatchEvent("AdLoaded");
         });
       });
@@ -67,14 +68,33 @@
       document.body.appendChild(script);
     }
 
+    prebuildElements() {
+      if (!this.adContainer) return;
+
+      this.adContainer.innerHTML = "";
+      this.timerElements = [];
+      this.videoElements = [];
+
+      this.elements.forEach((parallel) => {
+        parallel.elements.forEach((el) => {
+          const element = this.createElement(el);
+          if (element) {
+            element.style.opacity = "0"; // Hide initially, render later
+            this.adContainer.appendChild(element);
+          }
+        });
+      });
+    }
+
     startAd() {
       if (this.adStarted) return;
       try {
       this.adStarted = true;
       this.isPlaying = true;
-      this.renderAd();
+      this.syncAnimations();
       this.interval = setInterval(() => this.updateAdTime(), 1000);
       this.dispatchEvent("AdStarted");
+      console.log("element preparation completed");
       } catch(err) {
         console.log("Error while rendering the ad");
         console.error(err);
@@ -100,6 +120,7 @@
     }
 
     createElement(el) {
+      console.log("preparing element " + el);
       let elem = document.createElement("div");
       elem.style.position = "absolute";
       elem.style.opacity = "0";
@@ -161,6 +182,7 @@
     }
 
     syncAnimations() {
+      console.log("inside sync animations: ");
       gsap.set("[data-start]", { opacity: 0 });
 
       this.elements.forEach((parallel) => {
@@ -251,7 +273,6 @@
     }
 
     subscribe(callback, event) { 
-      console.log("subscribed to event: " + event);
       if (!this.eventCallbacks[event]) {
         this.eventCallbacks[event] = [];
       }
@@ -259,18 +280,18 @@
     }
 
     unsubscribe(callback, event) {
-      console.log("unsubscribed to event: " + event);
       if (this.eventCallbacks[event]) {
         this.eventCallbacks[event] = this.eventCallbacks[event].filter(listener => listener.callback !== callback);
       }
     }
 
     dispatchEvent(event) {
-      console.log("dispatched to event: " + event);
       if (this.eventCallbacks[event]) {
         this.eventCallbacks[event].forEach(listener => listener.callback.call());
       }
     }
+    getAdLinear() { return true; }
+
   }
 
   window.getVPAIDAd = function () {
