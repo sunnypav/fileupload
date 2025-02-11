@@ -36,20 +36,35 @@
         return;
       }
 
-      this.loadAll();
+            this.loadGSAP(() => {
+        this.loadQRCodeLibrary(() => {
+          this.dispatchEvent("AdLoaded");
+        });
+      });
     }
 
-    loadAll() {
-      console.log("inside loadall");
-      const gsapScript = document.createElement("script");
-      gsapScript.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js";
-      document.body.appendChild(gsapScript);
-      console.log("loaded gsap");
-      const qrScript = document.createElement("script");
-      qrScript.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
-      document.body.appendChild(qrScript);
-      console.log("loaded qr code library");
-      this.dispatchEvent("AdLoaded");
+    loadGSAP(callback) {
+      if (window.gsap) {
+        callback();
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js";
+      script.onload = callback;
+      document.body.appendChild(script);
+    }
+
+    loadQRCodeLibrary(callback) {
+      if (window.QRCode) {
+        callback();
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+      script.onload = callback;
+      document.body.appendChild(script);
     }
 
     startAd() {
@@ -218,20 +233,23 @@
       return this.adDuration - this.currentTime;
     }
 
-    subscribe(event, callback, context) {
+    subscribe(callback, event) { 
+      console.log("subscribed to event: " + event);
       if (!this.eventCallbacks[event]) {
         this.eventCallbacks[event] = [];
       }
       this.eventCallbacks[event].push({ callback, context });
     }
 
-    unsubscribe(event, callback) {
+    unsubscribe(callback, event) {
+      console.log("unsubscribed to event: " + event);
       if (this.eventCallbacks[event]) {
         this.eventCallbacks[event] = this.eventCallbacks[event].filter(listener => listener.callback !== callback);
       }
     }
 
     dispatchEvent(event) {
+      console.log("dispatched to event: " + event);
       if (this.eventCallbacks[event]) {
         this.eventCallbacks[event].forEach(listener => listener.callback.call(listener.context || this));
       }
