@@ -36,35 +36,17 @@
         return;
       }
 
-      this.loadGSAP(() => {
-        this.loadQRCodeLibrary(() => {
-          this.dispatchEvent("AdLoaded");
-        });
-      });
+      this.loadAll();
     }
 
-    loadGSAP(callback) {
-      if (window.gsap) {
-        callback();
-        return;
-      }
+    loadAll(callback) {
+      const gsapScript = document.createElement("script");
+      gsapScript.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js";
+      document.body.appendChild(gsapScript);
 
-      const script = document.createElement("script");
-      script.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js";
-      script.onload = callback;
-      document.body.appendChild(script);
-    }
-
-    loadQRCodeLibrary(callback) {
-      if (window.QRCode) {
-        callback();
-        return;
-      }
-
-      const script = document.createElement("script");
-      script.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
-      script.onload = callback;
-      document.body.appendChild(script);
+      const qrScript = document.createElement("script");
+      qrScript.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+      document.body.appendChild(qrScript);
     }
 
     startAd() {
