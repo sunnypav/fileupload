@@ -173,6 +173,20 @@
       });
     }
 
+    updateAdTime() {
+      this.currentTime++;
+
+      this.timerElements.forEach(({ elem, format }) => {
+        elem.innerText = this.formatTime(format, this.currentTime);
+      });
+
+      if (this.currentTime >= this.adDuration) {
+        this.stopAd();
+      }
+
+      this.dispatchEvent("AdRemainingTimeChange");
+    }
+
     pauseAd() {
       this.isPlaying = false;
       clearInterval(this.interval);
