@@ -16,8 +16,7 @@
       this.videoElements = [];
       this.timerElements = [];
       this.elements = [{"duration":1,"elements":[{"id":1739284243998,"name":"video-616","type":"video","x":100,"y":99,"width":1195,"height":699,"start":0,"duration":1},{"id":1739284265529,"name":"image-227","type":"image","x":1401,"y":99,"width":498,"height":498,"start":0,"duration":1},{"id":1739284280886,"name":"qr-204","type":"qr","x":1397,"y":701,"width":497,"height":349,"start":0,"duration":1},{"id":1739284295535,"name":"text-986","type":"text","x":104,"y":859,"width":1197,"height":100,"start":0,"duration":1,"textAlign":"center"}]}];
-      this.eventCallbacks = {}; 
-      this.gsapLoaded = false;
+      this.eventCallbacks = {};
       this.skipAdAllowed = false;
     }
 
@@ -30,6 +29,12 @@
       this.adHeight = height;
       this.viewMode = viewMode;
       this.desiredBitrate = desiredBitrate;
+      this.adContainer = environmentVars.slot; // Use provided ad container
+
+      if (!this.adContainer) {
+        console.error("VPAID Ad Error: No ad container provided.");
+        return;
+      }
 
       this.loadGSAP(() => {
         this.loadQRCodeLibrary(() => {
@@ -40,17 +45,13 @@
 
     loadGSAP(callback) {
       if (window.gsap) {
-        this.gsapLoaded = true;
         callback();
         return;
       }
 
       const script = document.createElement("script");
       script.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js";
-      script.onload = () => {
-        this.gsapLoaded = true;
-        callback();
-      };
+      script.onload = callback;
       document.body.appendChild(script);
     }
 
@@ -62,18 +63,12 @@
 
       const script = document.createElement("script");
       script.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
-      script.onload = () => {
-        callback();
-      };
+      script.onload = callback;
       document.body.appendChild(script);
     }
 
     startAd() {
       if (this.adStarted) return;
-      if (!this.gsapLoaded) {
-        setTimeout(() => this.startAd(), 100);
-        return;
-      }
 
       this.adStarted = true;
       this.isPlaying = true;
@@ -84,6 +79,7 @@
 
     renderAd() {
       if (!this.adContainer) return;
+
       this.adContainer.innerHTML = "";
       this.timerElements = [];
 
@@ -253,14 +249,6 @@
       if (this.eventCallbacks[event]) {
         this.eventCallbacks[event].forEach(listener => listener.callback.call(listener.context || this));
       }
-    }
-
-    formatTime(format, seconds) {
-      const d = Math.floor(seconds / 86400);
-      const h = Math.floor((seconds % 86400) / 3600);
-      const m = Math.floor((seconds % 3600) / 60);
-      const s = seconds % 60;
-      return format.replace("d", d).replace("h", h).replace("m", m).replace("s", s);
     }
   }
 
