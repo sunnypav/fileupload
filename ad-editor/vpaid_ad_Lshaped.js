@@ -36,10 +36,8 @@
         return;
       }
 
-            this.loadGSAP(() => {
-              console.log("loaded greensock library");
+      this.loadGSAP(() => {
         this.loadQRCodeLibrary(() => {
-          console.log("loaded qr code library");
           this.dispatchEvent("AdLoaded");
         });
       });
@@ -70,21 +68,22 @@
     }
 
     startAd() {
-      console.log("inside start Ad");
       if (this.adStarted) return;
-
+      try {
       this.adStarted = true;
       this.isPlaying = true;
       this.renderAd();
       this.interval = setInterval(() => this.updateAdTime(), 1000);
       this.dispatchEvent("AdStarted");
+      } catch(err) {
+        console.log("Error while rendering the ad");
+        console.error(err);
+      }
     }
 
     renderAd() {
-      console.log("inside render Ad");
-
       if (!this.adContainer) return;
-      try {
+
       this.adContainer.innerHTML = "";
       this.timerElements = [];
 
@@ -98,10 +97,6 @@
       });
 
       this.syncAnimations();
-      } catch(err){
-        console.error("error during rendering: ");
-        console.error(err);
-      }
     }
 
     createElement(el) {
@@ -111,15 +106,15 @@
       elem.setAttribute("data-start", el.startOffset || 0);
       elem.setAttribute("data-duration", el.duration || 5);
 
-      elem.style.width = (el.width / jsonData.outputResolution.width) * this.adWidth + "px";
-      elem.style.height = (el.height / jsonData.outputResolution.height) * this.adHeight + "px";
-      elem.style.left = (el.x / jsonData.outputResolution.width) * this.adWidth + "px";
-      elem.style.top = (el.y / jsonData.outputResolution.height) * this.adHeight + "px";
+      elem.style.width = (el.width / 1920) * this.adWidth + "px";
+      elem.style.height = (el.height / 1080) * this.adHeight + "px";
+      elem.style.left = (el.x / 1920) * this.adWidth + "px";
+      elem.style.top = (el.y / 1080)) * this.adHeight + "px";
 
       switch (el.type) {
         case "text":
           elem.innerText = el.content;
-          elem.style.fontSize = (el.fontSize / jsonData.outputResolution.width) * this.adWidth + "px";
+          elem.style.fontSize = (el.fontSize / 1920) * this.adWidth + "px";
           elem.style.color = el.color;
           elem.style.fontWeight = el.fontWeight;
           elem.style.backgroundColor = el.backgroundColor || "transparent";
