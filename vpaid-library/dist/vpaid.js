@@ -92,7 +92,7 @@ class $4e94b22561ceb88a$export$3e431a229df88919 extends (0, $d7f86b6b45e4f5ba$ex
         this.domElement.style.left = this.element.x / this.data.outputResolution.width * this.vpaidSettings.adWidth + "px";
         this.domElement.style.top = this.element.y / this.data.outputResolution.height * this.vpaidSettings.adHeight + "px";
         let img = document.createElement("img");
-        img.src = this.element.src;
+        img.src = this.element.url;
         img.style.width = "100%";
         img.style.height = "100%";
         img.onload = ()=>this.markLoaded();
