@@ -1,8 +1,8 @@
 import "gsap";
-import $5OpyM$qrcode from "qrcode";
+import $gIDO3$qrcode from "qrcode";
 
 
-class $d7f86b6b45e4f5ba$export$6f290de2114a78e9 {
+class $3c5c49b18bcbd8d8$export$6f290de2114a78e9 {
     constructor(data, element1, vpaidSettings){
         this.data = data;
         this.element = element1;
@@ -56,7 +56,7 @@ class $d7f86b6b45e4f5ba$export$6f290de2114a78e9 {
 }
 
 
-class $36ba103d6c960414$export$5f1af8db9871e1d6 extends (0, $d7f86b6b45e4f5ba$export$6f290de2114a78e9) {
+class $22625f4883952ef3$export$5f1af8db9871e1d6 extends (0, $3c5c49b18bcbd8d8$export$6f290de2114a78e9) {
     constructor(data, element, vpaidSettings){
         super(data, element, vpaidSettings);
         this.markLoaded();
@@ -80,7 +80,7 @@ class $36ba103d6c960414$export$5f1af8db9871e1d6 extends (0, $d7f86b6b45e4f5ba$ex
 
 
 
-class $4e94b22561ceb88a$export$3e431a229df88919 extends (0, $d7f86b6b45e4f5ba$export$6f290de2114a78e9) {
+class $3a8035c390ebcf24$export$3e431a229df88919 extends (0, $3c5c49b18bcbd8d8$export$6f290de2114a78e9) {
     constructor(data, element, vpaidSettings){
         super(data, element, vpaidSettings);
     }
@@ -103,7 +103,7 @@ class $4e94b22561ceb88a$export$3e431a229df88919 extends (0, $d7f86b6b45e4f5ba$ex
 
 
 
-class $844aba6c88fb6fd6$export$ae01dedf5c052bb extends (0, $d7f86b6b45e4f5ba$export$6f290de2114a78e9) {
+class $8e083f0750b502ac$export$ae01dedf5c052bb extends (0, $3c5c49b18bcbd8d8$export$6f290de2114a78e9) {
     constructor(data, element, vpaidSettings){
         super(data, element, vpaidSettings);
     }
@@ -170,7 +170,7 @@ class $844aba6c88fb6fd6$export$ae01dedf5c052bb extends (0, $d7f86b6b45e4f5ba$exp
 
 
 
-class $c360d758feb56235$export$7a8899e6b0e671b3 extends (0, $d7f86b6b45e4f5ba$export$6f290de2114a78e9) {
+class $d6876ac034ae9d18$export$7a8899e6b0e671b3 extends (0, $3c5c49b18bcbd8d8$export$6f290de2114a78e9) {
     constructor(data, element, vpaidSettings){
         super(data, element, vpaidSettings);
         this.generateQRCode();
@@ -189,7 +189,7 @@ class $c360d758feb56235$export$7a8899e6b0e671b3 extends (0, $d7f86b6b45e4f5ba$ex
     }
     // Generate QR code once dependencies are loaded
     generateQRCode() {
-        this.qrCodeInstance = new (0, $5OpyM$qrcode)(this.domElement, {
+        this.qrCodeInstance = new (0, $gIDO3$qrcode)(this.domElement, {
             text: this.element.url,
             width: parseInt(this.domElement.style.width, 10),
             height: parseInt(this.domElement.style.height, 10)
@@ -199,7 +199,7 @@ class $c360d758feb56235$export$7a8899e6b0e671b3 extends (0, $d7f86b6b45e4f5ba$ex
 
 
 
-class $8b253f7c95746d51$export$c57e9b2d8b9e4de extends (0, $d7f86b6b45e4f5ba$export$6f290de2114a78e9) {
+class $d97777fd2dd2f899$export$c57e9b2d8b9e4de extends (0, $3c5c49b18bcbd8d8$export$6f290de2114a78e9) {
     constructor(data, element1, vpaidSettings){
         super(data, element1, vpaidSettings);
     }
@@ -271,19 +271,19 @@ class $8b253f7c95746d51$export$c57e9b2d8b9e4de extends (0, $d7f86b6b45e4f5ba$exp
 }
 
 
-class $484526ddff93e254$export$a5e9477317b8a615 {
+class $9ae07b44bf46459c$export$a5e9477317b8a615 {
     static createElement(data, element, vpaidSettings) {
         switch(data.type){
             case "text":
-                return new (0, $36ba103d6c960414$export$5f1af8db9871e1d6)(data, element, vpaidSettings);
+                return new (0, $22625f4883952ef3$export$5f1af8db9871e1d6)(data, element, vpaidSettings);
             case "image":
-                return new (0, $4e94b22561ceb88a$export$3e431a229df88919)(data, element, vpaidSettings);
+                return new (0, $3a8035c390ebcf24$export$3e431a229df88919)(data, element, vpaidSettings);
             case "video":
-                return new (0, $844aba6c88fb6fd6$export$ae01dedf5c052bb)(data, element, vpaidSettings);
+                return new (0, $8e083f0750b502ac$export$ae01dedf5c052bb)(data, element, vpaidSettings);
             case "qr":
-                return new (0, $c360d758feb56235$export$7a8899e6b0e671b3)(data, element, vpaidSettings);
+                return new (0, $d6876ac034ae9d18$export$7a8899e6b0e671b3)(data, element, vpaidSettings);
             case "timer":
-                return new (0, $8b253f7c95746d51$export$c57e9b2d8b9e4de)(data, element, vpaidSettings);
+                return new (0, $d97777fd2dd2f899$export$c57e9b2d8b9e4de)(data, element, vpaidSettings);
             default:
                 return null;
         }
@@ -291,7 +291,7 @@ class $484526ddff93e254$export$a5e9477317b8a615 {
 }
 
 
-class $9c8becfb7d0a69cc$var$VPaidAd {
+class $09f3d55f33ca09e4$var$VPaidAd {
     constructor(){
         this.adContainer = null;
         this.currentTime = 0;
@@ -341,7 +341,7 @@ class $9c8becfb7d0a69cc$var$VPaidAd {
         this.adContainer.innerHTML = "";
         this.elements.forEach((parallel)=>{
             parallel.elements.forEach((el)=>{
-                const elementInstance = (0, $484526ddff93e254$export$a5e9477317b8a615).createElement(this.adParameters, el, this.vpaidSettings);
+                const elementInstance = (0, $9ae07b44bf46459c$export$a5e9477317b8a615).createElement(this.adParameters, el, this.vpaidSettings);
                 if (elementInstance) {
                     this.elements[el] = elementInstance;
                     const domElement = elementInstance.getRootElement();
@@ -461,12 +461,11 @@ class $9c8becfb7d0a69cc$var$VPaidAd {
         return true;
     }
 }
-var $9c8becfb7d0a69cc$export$2e2bcd8739ae039 = $9c8becfb7d0a69cc$var$VPaidAd;
+var $09f3d55f33ca09e4$export$2e2bcd8739ae039 = $09f3d55f33ca09e4$var$VPaidAd;
 
 
 window.getVPAIDAd = function() {
-    return new (0, $9c8becfb7d0a69cc$export$2e2bcd8739ae039)();
+    return new (0, $09f3d55f33ca09e4$export$2e2bcd8739ae039)();
 };
 
 
-//# sourceMappingURL=vpaid.js.map
