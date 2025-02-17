@@ -92,7 +92,7 @@ class $4e94b22561ceb88a$export$3e431a229df88919 extends (0, $d7f86b6b45e4f5ba$ex
         this.domElement.style.left = this.element.x / this.data.outputResolution.width * this.vpaidSettings.adWidth + "px";
         this.domElement.style.top = this.element.y / this.data.outputResolution.height * this.vpaidSettings.adHeight + "px";
         let img = document.createElement("img");
-        img.src = this.element.url;
+        img.src = this.element.src;
         img.style.width = "100%";
         img.style.height = "100%";
         img.onload = ()=>this.markLoaded();
@@ -115,7 +115,7 @@ class $844aba6c88fb6fd6$export$ae01dedf5c052bb extends (0, $d7f86b6b45e4f5ba$exp
         this.domElement.style.left = this.element.x / this.settings.outputResolution.width * this.vpaidSettings.adWidth + "px";
         this.domElement.style.top = this.element.y / this.settings.outputResolution.height * this.vpaidSettings.adHeight + "px";
         this.videoElement = document.createElement("video");
-        this.videoElement.src = this.element.url;
+        this.videoElement.src = this.element.src;
         this.videoElement.style.width = "100%";
         this.videoElement.style.height = "100%";
         this.videoElement.controls = false;
@@ -174,6 +174,7 @@ class $c360d758feb56235$export$7a8899e6b0e671b3 extends (0, $d7f86b6b45e4f5ba$ex
     constructor(data, element, vpaidSettings){
         super(data, element, vpaidSettings);
         this.generateQRCode();
+        this.markLoaded();
     }
     // Creates the QR code element inside the div container
     createElement() {
@@ -186,18 +187,12 @@ class $c360d758feb56235$export$7a8899e6b0e671b3 extends (0, $d7f86b6b45e4f5ba$ex
         this.domElement.style.top = `${this.element.y / this.data.outputResolution.height * this.vpaidSettings.adHeight}px`;
         return this.domElement;
     }
+    // Generate QR code once dependencies are loaded
     generateQRCode() {
-        // Create a canvas inside the element to render the QR code
-        const canvas = document.createElement("canvas");
-        this.domElement.appendChild(canvas);
-        // Generate the QR code on the canvas
-        (0, $5OpyM$qrcode).toCanvas(canvas, this.element.url, {
+        this.qrCodeInstance = new (0, $5OpyM$qrcode)(this.domElement, {
+            text: this.element.url,
             width: parseInt(this.domElement.style.width, 10),
             height: parseInt(this.domElement.style.height, 10)
-        }).then(()=>{
-            this.markLoaded(); // Mark element as fully loaded
-        }).catch((err)=>{
-            console.error("QR Code generation failed:", err);
         });
     }
 }
